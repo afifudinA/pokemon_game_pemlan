@@ -19,52 +19,38 @@ class Battle:
             if player_moves_first:
                 self.player_turn(player_move)
             else:
-                self.enemy_turn(player_move)  # Fix here
+                self.enemy_turn(player_move)
 
-    def player_turn(self,player_move):
+    def player_turn(self, player_move):
         if player_move is not None:
-            self.player.get_active_pokemon().attack(player_move, self.enemy.get_active_pokemon())
-            if self.enemy.get_active_pokemon().real_stats['hp'] <= 0:
-                print(f"{self.enemy.name}'s {self.enemy.get_active_pokemon().name} has fainted!")
-                self.enemy.my_pokemon.remove(self.enemy.active_pokemon)
-                if not self.enemy.my_pokemon:
-                    print(f"{self.player.name}'s Won!")
-                    exit()
-                self.enemy.switch_pokemon(True)
+            self.execute_move(self.player, player_move, self.enemy)
 
-            enemy_move_name = random.choice(list(self.enemy.get_active_pokemon().move_pool.keys()))
-            enemy_move = self.enemy.get_active_pokemon().move_pool[enemy_move_name]
-            enemy_move.name = enemy_move_name
-            self.enemy.get_active_pokemon().attack(enemy_move, self.player.get_active_pokemon())
-
-            if self.player.get_active_pokemon().real_stats['hp'] <= 0:
-                print(f"{self.player.name}'s {self.player.get_active_pokemon().name} has fainted!")
-                self.player.my_pokemon.remove(self.player.active_pokemon)
-                if not self.player.my_pokemon:
-                    print(f"{self.enemy.name}'s Won!")
-                    exit()
-                self.player.switch_pokemon()
+        enemy_move_name = random.choice(list(self.enemy.get_active_pokemon().move_pool.keys()))
+        enemy_move = self.enemy.get_active_pokemon().move_pool[enemy_move_name]
+        enemy_move.name = enemy_move_name
+        self.execute_move(self.enemy, enemy_move, self.player)
 
     def enemy_turn(self, player_move):
         enemy_move_name = random.choice(list(self.enemy.get_active_pokemon().move_pool.keys()))
         enemy_move = self.enemy.get_active_pokemon().move_pool[enemy_move_name]
         enemy_move.name = enemy_move_name
-        self.enemy.get_active_pokemon().attack(enemy_move, self.player.get_active_pokemon())
-
-        if self.player.get_active_pokemon().real_stats['hp'] <= 0:
-            print(f"{self.player.name}'s {self.player.get_active_pokemon().name} has fainted!")
-            self.player.my_pokemon.remove(self.player.active_pokemon)
-            if not self.player.my_pokemon:
-                print(f"{self.enemy.name}'s Won!")
-                exit()
-            self.player.switch_pokemon()
+        self.execute_move(self.enemy, enemy_move, self.player)
 
         if player_move is not None:
-            self.player.get_active_pokemon().attack(player_move, self.enemy.get_active_pokemon())
-            if self.enemy.get_active_pokemon().real_stats['hp'] <= 0:
-                print(f"{self.enemy.name}'s {self.enemy.get_active_pokemon().name} has fainted!")
-                self.enemy.my_pokemon.remove(self.enemy.active_pokemon)
-                if not self.enemy.my_pokemon:
-                    print(f"{self.player.name}'s Won!")
-                    exit()
-                self.enemy.switch_pokemon(True)
+            self.execute_move(self.player, player_move, self.enemy)
+
+    def execute_move(self, attacker, move, target):
+        attacker.get_active_pokemon().attack(move, target.get_active_pokemon())
+        if target.get_active_pokemon().real_stats['hp'] <= 0:
+            self.handle_fainted_pokemon(target)
+
+    def handle_fainted_pokemon(self, entity):
+        print(f"{entity.name}'s {entity.get_active_pokemon().name} has fainted!")
+        entity.my_pokemon.remove(entity.active_pokemon)
+        if not entity.my_pokemon:
+            print(f"{self.get_opponent(entity).name}'s Won!")
+            exit()
+        entity.switch_pokemon()
+
+    def get_opponent(self, entity):
+        return self.enemy if entity == self.player else self.player
