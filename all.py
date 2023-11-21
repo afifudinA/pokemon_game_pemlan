@@ -128,7 +128,7 @@ class Entity:
         self.name = name
         self.my_pokemon = random.sample(all_pokemon, 2)
         self.active_pokemon = None
-
+        print()
     def switch_pokemon(self, enemy=False):
         if enemy:
             self.active_pokemon = random.choice(self.my_pokemon)
