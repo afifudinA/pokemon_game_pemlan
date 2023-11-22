@@ -17,7 +17,6 @@ class TextViewer:
         self.text_widget.delete("1.0", tk.END)
         self.text_widget.insert(tk.END, current_text + text + "\n")
         
-
     def close_viewer(self):
         self.master.destroy()
 
@@ -32,7 +31,6 @@ class TextViewer:
             
     def on_choice_selected(self, choice):
         self.selected_choice = choice
-        self.display_text(f"Selected choice: {choice}")
         self.master.destroy()
     
     
@@ -97,9 +95,9 @@ class Pokemon:
         if effectiveness_multiplier == 2.0:
             effectiveness_text = " it's Super effective!"
         elif effectiveness_multiplier == 0.5:
-            effectiveness_text = " it's not very effective!"
+            effectiveness_text = " but it's not very effective!"
         elif effectiveness_multiplier == 0.0:
-            effectiveness_text = " it's not effective at all!"  # or any other message for immune
+            effectiveness_text = f" , but {target_pokemon.name} immune to it"  # or any other message for immune
         else:
             effectiveness_text = ""
 
@@ -115,20 +113,24 @@ class Pokemon:
         damage, is_critical, effectiveness_text = self.calculate_damage(move, target_pokemon)
         move_text = f"{self.name} used {move.name}"
         critical_text = " it's Critical hit!" if is_critical else ""
-        print(f"\n{move_text}{critical_text}{effectiveness_text}")
-        target_pokemon.receive_damage(damage)
+        text = f"\n{move_text}{critical_text}{effectiveness_text}"
+        root = tk.Tk()
+        text_viewer = TextViewer(root)
+        text_viewer.display_text(text)
+        target_pokemon.receive_damage(damage, text_viewer)
+        root.mainloop()
 
-    def receive_damage(self, damage):
+    def receive_damage(self, damage, text_viewer):
         self.real_stats['hp'] = max(0, self.real_stats['hp'] - damage)
-        print(f"{self.name} now has {self.real_stats['hp']} HP.")
+        text = f"{self.name} now has {self.real_stats['hp']} HP." 
+        text_viewer.display_text(text)
         return self.real_stats['hp'] == 0
 
 class Entity:
     def __init__(self, name, all_pokemon):
         self.name = name
-        self.my_pokemon = random.sample(all_pokemon, 2)
+        self.my_pokemon = random.sample(all_pokemon, 1)
         self.active_pokemon = None
-        print()
     def switch_pokemon(self, enemy=False):
         if enemy:
             self.active_pokemon = random.choice(self.my_pokemon)
@@ -143,14 +145,20 @@ class Entity:
         text = "" 
         for i, pokemon in enumerate(self.my_pokemon, 1):
             text += str(i) + ". " + pokemon.name + "\n"
-            print(f"{i}. {pokemon.name}")
+            # print(f"{i}. {pokemon.name}")
         num_choices = len(self.my_pokemon)
         text_viewer.display_text(text)    
         text_viewer.display_choice(list(map(str, range(1, num_choices + 1))))
         root.mainloop()
         pokemon_choice = int(text_viewer.selected_choice)
         self.active_pokemon = self.my_pokemon[pokemon_choice - 1]
-        print(f"{self.name} switched to {self.active_pokemon.name}.")
+        text = f"{self.name} switched to {self.active_pokemon.name}."
+        root = tk.Tk()
+        text_viewer = TextViewer(root)
+        text_viewer.display_text(text)
+        text = "" 
+        root.mainloop()
+        # print(f"{self.name} switched to {self.active_pokemon.name}.")
 
     def get_active_pokemon_speed(self):
         return self.active_pokemon.real_stats['speed']
@@ -159,7 +167,12 @@ class Entity:
         return self.active_pokemon
 
     def choose_move_or_switch(self):
-        print(f"{self.name}'s turn:")
+        root = tk.Tk()
+        text = f"{self.name}'s turn:"
+        text_viewer = TextViewer(root)
+        text_viewer.display_text(text)
+        root.mainloop()
+        # print(f"{self.name}'s turn:")
         # Default behavior: choose a random move
         move_name = random.choice(list(self.active_pokemon.move_pool.keys()))
         return self.active_pokemon.move_pool[move_name], move_name
@@ -244,10 +257,20 @@ class Battle:
             self.handle_fainted_pokemon(target)
 
     def handle_fainted_pokemon(self, entity):
-        print(f"{entity.name}'s {entity.get_active_pokemon().name} has fainted!")
+        text = f"{entity.name}'s {entity.get_active_pokemon().name} has fainted!"
+        root = tk.Tk()
+        text_viewer = TextViewer(root)
+        text_viewer.display_text(text)
+        root.mainloop()
         entity.my_pokemon.remove(entity.active_pokemon)
         if not entity.my_pokemon:
-            print(f"{self.get_opponent(entity).name}'s Won!")
+            text = f"{entity.name} Out Of Pokemon!"
+            root = tk.Tk()
+            text_viewer = TextViewer(root)
+            text_viewer.display_text(text)
+            text = f"{self.get_opponent(entity).name}'s Won!"
+            text_viewer.display_text(text)
+            root.mainloop()
             exit()
         entity.switch_pokemon()
 
