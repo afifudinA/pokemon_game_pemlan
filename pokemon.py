@@ -1,6 +1,7 @@
 import csv
 import random
 import math
+
 class Move:
     def __init__(self, name, power, accuracy, move_type):
         self.name = name

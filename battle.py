@@ -1,4 +1,6 @@
 import random
+import tkinter as tk
+from textviewer import TextViewer
 
 class Battle:
     def __init__(self, player, enemy):
@@ -45,10 +47,20 @@ class Battle:
             self.handle_fainted_pokemon(target)
 
     def handle_fainted_pokemon(self, entity):
-        print(f"{entity.name}'s {entity.get_active_pokemon().name} has fainted!")
+        text = f"{entity.name}'s {entity.get_active_pokemon().name} has fainted!"
+        root = tk.Tk()
+        text_viewer = TextViewer(root)
+        text_viewer.display_text(text)
+        root.mainloop()
         entity.my_pokemon.remove(entity.active_pokemon)
         if not entity.my_pokemon:
-            print(f"{self.get_opponent(entity).name}'s Won!")
+            text = f"{entity.name} Out Of Pokemon!"
+            root = tk.Tk()
+            text_viewer = TextViewer(root)
+            text_viewer.display_text(text)
+            text = f"{self.get_opponent(entity).name}'s Won!"
+            text_viewer.display_text(text)
+            root.mainloop()
             exit()
         entity.switch_pokemon()
 
