@@ -16,7 +16,7 @@ class Battle:
                     self.player.get_active_pokemon_speed() == self.enemy.get_active_pokemon_speed() and random.choice([True, False])
             )
 
-            player_move, move_name = self.player.choose_move_or_switch()
+            player_move, move_name = self.player.choose_move_or_switch(self.enemy.get_active_pokemon())
 
             if player_moves_first:
                 self.player_turn(player_move)

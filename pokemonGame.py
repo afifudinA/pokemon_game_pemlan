@@ -9,12 +9,9 @@ from textviewer import TextViewer
 class Entity:
     def __init__(self, name, all_pokemon):
         self.name = name
-        self.my_pokemon = random.sample(all_pokemon, 1)
+        self.my_pokemon = random.sample(all_pokemon, 3)
         self.active_pokemon = None
     def switch_pokemon(self, enemy=False):
-        if enemy:
-            self.active_pokemon = random.choice(self.my_pokemon)
-            return
         if len(self.my_pokemon) == 1:
             self.active_pokemon = self.my_pokemon[0]
             return
@@ -58,8 +55,9 @@ class Entity:
         return self.active_pokemon.move_pool[move_name], move_name
 
 class Player(Entity):
-    def choose_move_or_switch(self):
-        text = self.name + "'s turn: \n1. Attack\n2. Switch Pokemon"
+    def choose_move_or_switch(self, enemy):
+        text = f"Enemy Pokemon is {enemy.name} and has {enemy.real_stats['hp']} left\n\n" 
+        text += self.name + "'s turn: \n1. Attack\n2. Switch Pokemon"
         root = tk.Tk()
         text_viewer = TextViewer(root)
         text_viewer.display_text(text)
@@ -90,7 +88,8 @@ class Player(Entity):
         return self.active_pokemon.move_pool[move_name], move_name
 
 class Enemy(Entity):
-    pass  # No need to override, it will use the default behavior
+    def switch_pokemon(self, enemy=False):
+        self.active_pokemon = random.choice(self.my_pokemon)
 
 def load_all_pokemon():
     pokemon_list = []

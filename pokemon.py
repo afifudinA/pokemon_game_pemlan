@@ -1,6 +1,9 @@
 import csv
 import random
 import math
+import tkinter as tk
+from textviewer import TextViewer
+
 
 class Move:
     def __init__(self, name, power, accuracy, move_type):
@@ -80,10 +83,16 @@ class Pokemon:
         damage, is_critical, effectiveness_text = self.calculate_damage(move, target_pokemon)
         move_text = f"{self.name} used {move.name}"
         critical_text = " it's Critical hit!" if is_critical else ""
-        print(f"\n{move_text}{critical_text}{effectiveness_text}")
-        target_pokemon.receive_damage(damage)
+        text = f"\n{move_text}{critical_text}{effectiveness_text}"
+        root = tk.Tk()
+        text_viewer = TextViewer(root)
+        text_viewer.display_text(text)
+        target_pokemon.receive_damage(damage, text_viewer, root)
 
-    def receive_damage(self, damage):
+    def receive_damage(self, damage, text_viewer, root):
         self.real_stats['hp'] = max(0, self.real_stats['hp'] - damage)
-        print(f"{self.name} now has {self.real_stats['hp']} HP.")
+        # print(f"{self.name} now has {self.real_stats['hp']} HP.")
+        text = f"{self.name} now has {self.real_stats['hp']} HP."
+        text_viewer.display_text(text)
+        root.mainloop()
         return self.real_stats['hp'] == 0

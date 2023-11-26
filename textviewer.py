@@ -3,7 +3,7 @@ import tkinter as tk
 class TextViewer:
     def __init__(self, master):
         self.master = master
-        self.text_widget = tk.Text(master, height=10, width=40)
+        self.text_widget = tk.Text(master, height=10, width=60)
         self.text_widget.pack()
         button_close = tk.Button(self.master, text="Close",  command=self.close_viewer)
         button_close.pack(side=tk.BOTTOM, pady=5)
