@@ -42,6 +42,9 @@ class Entity:
 
     def get_active_pokemon(self):
         return self.active_pokemon
+    
+    def set_active_pokemon(self, pokemon):
+        self.active_pokemon = pokemon
 
     def choose_move_or_switch(self):
         root = tk.Tk()

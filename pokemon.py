@@ -83,7 +83,7 @@ class Pokemon:
         damage, is_critical, effectiveness_text = self.calculate_damage(move, target_pokemon)
         move_text = f"{self.name} used {move.name}"
         critical_text = " it's Critical hit!" if is_critical else ""
-        text = f"\n{move_text}{critical_text}{effectiveness_text}"
+        text = f"\n{move_text}{critical_text}{effectiveness_text} and deals {damage} damage"
         root = tk.Tk()
         text_viewer = TextViewer(root)
         text_viewer.display_text(text)
